@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from imageviewer import ImageViewer
+from imageviewer import ImagePanel
 from filebrowser import FileBrowser
 
 import sys,os
@@ -12,8 +13,8 @@ class TeleskopWindow(QMainWindow):
         self.setupGUI()
 
     def setupGUI(self):
-        self.imageViewer = ImageViewer()
-        filename = "/home/emre/Desktop/deneme/24062010092.jpg"
+        """self.imageViewer = ImageViewer()
+        filename = "IMG_2163.JPG"
         file, ext = os.path.splitext(filename)
         self.imageViewer.loadImage(filename)
         self.imageViewer.resize(QSize(800,600), "%s_new%s" % (file, ext ) )
@@ -21,9 +22,17 @@ class TeleskopWindow(QMainWindow):
         self.fileBrowser = FileBrowser()
         
         layout = QHBoxLayout()
-        layout.addWidget(self.imageViewer)
-        layout.addWidget(self.fileBrowser)
+        layout.addWidget(self.imageView<er)
+        layout.addWidget(self.fileBrowser)"""
 
+        layout = QHBoxLayout()
+
+        self.image_panel = ImagePanel()
+        self.file_browser = FileBrowser()
+
+        layout.addWidget(self.image_panel)
+        layout.addWidget(self.file_browser)
+        
         self.widget = QWidget()
         self.widget.setLayout(layout)
 
