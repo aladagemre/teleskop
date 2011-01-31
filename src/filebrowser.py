@@ -40,10 +40,11 @@ class FileBrowser(QWidget):
         path = str ( self.directoryTree.model().filePath(currentIndex) )
         
         if self.directoryTree.model().isDir(currentIndex):
-            #self.directory_path = path
             self.directorySelectedSignal.emit(path)
         else:
-            self.fileSelectedSignal.emit(path)            
+            self.directorySelectedSignal.emit(os.path.dirname(path))
+            self.fileSelectedSignal.emit(path)
+
     
 if __name__ == '__main__':
     import sys

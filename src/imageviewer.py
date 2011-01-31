@@ -41,9 +41,10 @@ class ImageViewer(QLabel):
         """im = Image.open(self.image_path)
         resizedImage = im.resize(size, Image.ANTIALIAS)
         resizedImage.save(output, "JPEG",quality=100)"""
-        command = "mogrify -resize %dx%d %s" % (size[0], size[1], self.image_path)
-        child = subprocess.Popen(command, shell=True)
-        child.communicate()
+        command = "mogrify -resize %dx%d %s &" % (size[0], size[1], self.image_path)
+        #child = subprocess.Popen(command, shell=True)
+        #child.communicate()
+        os.system(command)
 
 
 class ImageInfoPanel(QGroupBox):
@@ -145,6 +146,8 @@ class ImagePanel(QWidget):
     def loadImage(self, image_path):
         if isinstance(image_path, int):
             # if we want x th image, then convert it to real path.
+            if image_path >= self.num_files:
+                image_path = 0
             self.current_index = image_path
             image_path = os.path.join( self.directory_path, self.file_list[ image_path ] )
 
@@ -186,7 +189,7 @@ class ImagePanel(QWidget):
         if not rejected:
             print "Removing", self.image_viewer.image_path
             os.remove(self.image_viewer.image_path)
-            self.file_list.remove(os.path.basename( self.image_viewer.image_path))
+            self.file_list.remove(os.path.basename( self.image_viewer.image_path ) )
             self.num_files -= 1
             self.loadImage(self.current_index)
             
