@@ -11,13 +11,21 @@ class ImageViewer(QLabel):
 
     def loadImage(self, image_path):
         self.image_path = image_path
-        size = self.size()
         pixmap = QPixmap(image_path)
-        pixmap = pixmap.scaled(size)
+
+        # Find label width/height
+        lwidth, lheight = self.size().width(), self.size().height()
+        # Find image width/height
+        width, height = pixmap.width(), pixmap.height()
+
+        # According to image width/height,
+        # scale up to label width/height
+        if width > height:
+            pixmap = pixmap.scaledToWidth(lwidth)
+        else:
+            pixmap = pixmap.scaledToHeight(lheight)
+        #pixmap = pixmap.scaled()
         self.setPixmap(pixmap)
-        
-        
-        # emit signal
 
     def resize(self, newSize, output=None):
         """Resizes the image to newsize, saves to output path if specified.
@@ -68,6 +76,7 @@ class ImageInfoPanel(QGroupBox):
         
 
     def loadImage(self, image_path):
+        image_path = str(image_path)
         im = Image.open(image_path)
         self.value_image_name.setText( os.path.basename(image_path) )
         self.value_image_directory.setText( os.path.dirname(image_path) )
@@ -144,15 +153,15 @@ class ImagePanel(QWidget):
         self.label_progress.setText("%d out of %d" % ( self.current_index + 1, self.num_files) )
 
     def loadDirectory(self, directory_path):
-        self.directory_path = directory_path
+        self.directory_path = str( directory_path )
         files = filter( lambda filename: str(filename[-4:]).lower() in (".jpg", ".png"), os.listdir(directory_path) )
         self.file_list = sorted(files)
         self.num_files = len(self.file_list)
         
         if self.file_list:
             self.loadImage(0)
-        else:
-            QMessageBox(self, None, "No images found", "This directory does not contain any image files.")
+        """else:
+            QMessageBox.information(self, "No images found", "This directory does not contain any image files.")"""
 
     def nextImage(self):
         if self.file_list:

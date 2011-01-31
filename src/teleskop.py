@@ -12,19 +12,14 @@ class TeleskopWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.setupGUI()
 
-    def setupGUI(self):
-        """self.imageViewer = ImageViewer()
-        filename = "IMG_2163.JPG"
-        file, ext = os.path.splitext(filename)
-        self.imageViewer.loadImage(filename)
-        self.imageViewer.resize(QSize(800,600), "%s_new%s" % (file, ext ) )
-
-        self.fileBrowser = FileBrowser()
+    def resizeEvent(self, event):
+        size = self.size()
+        self.image_panel.setMaximumWidth(size.width()*0.75)
+        self.file_browser.setMaximumWidth(size.width()*0.25)
+        self.image_panel.setMaximumHeight(size.height()*0.9)
+        self.file_browser.setMaximumHeight(size.height())
         
-        layout = QHBoxLayout()
-        layout.addWidget(self.imageViewer)
-        layout.addWidget(self.fileBrowser)"""
-
+    def setupGUI(self):
         layout = QHBoxLayout()
 
         self.image_panel = ImagePanel()
@@ -44,8 +39,9 @@ class TeleskopWindow(QMainWindow):
         self.connectSlots()
         
     def connectSlots(self):
-        #self.connect(self.scene, SIGNAL('sceneMouseMove'), self.displayCoordinate)
-        pass
+        self.file_browser.fileSelectedSignal.connect(self.image_panel.loadImage)
+        self.file_browser.directorySelectedSignal.connect(self.image_panel.loadDirectory)
+        
 
     def displayCoordinate(self, point):
         self.statusBar().showMessage("(%s, %s)" % (point.x(), point.y()))
@@ -59,12 +55,6 @@ class TeleskopWindow(QMainWindow):
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(exit)
-
-    
-    """def resizeEvent(self, event):
-        pass"""
-
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
