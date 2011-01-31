@@ -78,12 +78,15 @@ class ImageInfoPanel(QGroupBox):
 
     def loadImage(self, image_path):
         image_path = str(image_path)
-        im = Image.open(image_path)
-        self.value_image_name.setText( os.path.basename(image_path) )
-        self.value_image_directory.setText( os.path.dirname(image_path) )
-        self.value_image_dimensions.setText( "%sx%s" % (im.size) )
-        self.value_image_size.setText("%.2f MB" %  ( os.path.getsize(image_path)/(1024.0**2) ) )
-        
+        try:
+            im = Image.open(image_path)
+
+            self.value_image_name.setText( os.path.basename(image_path) )
+            self.value_image_directory.setText( os.path.dirname(image_path) )
+            self.value_image_dimensions.setText( "%sx%s" % (im.size) )
+            self.value_image_size.setText("%.2f MB" %  ( os.path.getsize(image_path)/(1024.0**2) ) )
+        except IOError:
+            print "I/O Error for file:", image_path
         
 
 class ImagePanel(QWidget):
@@ -119,8 +122,8 @@ class ImagePanel(QWidget):
 
         # =========== ( RESIZE BUTTONS ) =================
         # Define buttons and shortcuts
-        self.button_resize800 = QPushButton("[&1] 800x600")
-        self.button_resize1024 = QPushButton("[&2] 1024x768")
+        self.button_resize800 = QPushButton("[&Z] 800x600")
+        self.button_resize1024 = QPushButton("[&X] 1024x768")
         self.button_delete = QPushButton("Delete")
         self.button_delete.setShortcut(QKeySequence("Del"))
 
@@ -150,6 +153,9 @@ class ImagePanel(QWidget):
                 image_path = 0
             self.current_index = image_path
             image_path = os.path.join( self.directory_path, self.file_list[ image_path ] )
+        else:
+            # find the current index then
+            self.current_index = self.file_list.index( os.path.basename(str ( image_path ) ) )
 
         self.image_info.loadImage(image_path)
         self.image_viewer.loadImage(image_path)
