@@ -141,7 +141,7 @@ class ImagePanel(QWidget):
         self.layout.addWidget(self.image_info)
         self.layout.addLayout(layout_resize_button)
         
-        self.loadDirectory("/home/emre/git/teleskop/src/images")
+        self.loadDirectory("/home/emre/multimedia/resim")
         
     def loadImage(self, image_path):
         if isinstance(image_path, int):
