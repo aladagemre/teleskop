@@ -22,7 +22,7 @@ class TeleskopWindow(QMainWindow):
         self.fileBrowser = FileBrowser()
         
         layout = QHBoxLayout()
-        layout.addWidget(self.imageView<er)
+        layout.addWidget(self.imageViewer)
         layout.addWidget(self.fileBrowser)"""
 
         layout = QHBoxLayout()

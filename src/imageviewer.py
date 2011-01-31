@@ -2,7 +2,7 @@
 #from PyQt4.QtGui import QLabel, QPixmap, QGroupBox, QGridLayout
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import sys, os
+import sys, os, subprocess
 from PIL import Image
 
 class ImageViewer(QLabel):
@@ -30,10 +30,12 @@ class ImageViewer(QLabel):
         if not output:
             output = self.image_path
 
-        im = Image.open(self.image_path)
-        resizedImage = im.resize(size, Image.BICUBIC)
-        resizedImage.save(output, "JPEG")
-
+        """im = Image.open(self.image_path)
+        resizedImage = im.resize(size, Image.ANTIALIAS)
+        resizedImage.save(output, "JPEG",quality=100)"""
+        command = "mogrify -resize %dx%d %s" % (size[0], size[1], self.image_path)
+        child = subprocess.Popen(command, shell=True)
+        child.communicate()
 
 
 class ImageInfoPanel(QGroupBox):
@@ -85,11 +87,14 @@ class ImagePanel(QWidget):
         self.button_right= QPushButton(">")
         self.button_left.clicked.connect(self.previousImage)
         self.button_right.clicked.connect(self.nextImage)
+        
+        self.label_progress = QLabel("N/A")
 
         layout_nav_button = QHBoxLayout()
-        
-        
+                
         layout_nav_button.addWidget(self.button_left)
+        layout_nav_button.addStretch()
+        layout_nav_button.addWidget(self.label_progress)
         layout_nav_button.addStretch()
         layout_nav_button.addWidget(self.button_right)
 
@@ -104,8 +109,8 @@ class ImagePanel(QWidget):
 
         # =========== ( RESIZE BUTTONS ) =================
         # Define buttons and shortcuts
-        self.button_resize800 = QPushButton("&800x600")
-        self.button_resize1024 = QPushButton("&1024x768")
+        self.button_resize800 = QPushButton("[&1] 800x600")
+        self.button_resize1024 = QPushButton("[&2] 1024x768")
         self.button_delete = QPushButton("Delete")
         self.button_delete.setShortcut(QKeySequence("Del"))
 
@@ -132,15 +137,16 @@ class ImagePanel(QWidget):
         if isinstance(image_path, int):
             # if we want x th image, then convert it to real path.
             self.current_index = image_path
-            print image_path
             image_path = os.path.join( self.directory_path, self.file_list[ image_path ] )
 
         self.image_info.loadImage(image_path)
         self.image_viewer.loadImage(image_path)
+        self.label_progress.setText("%d out of %d" % ( self.current_index + 1, self.num_files) )
 
     def loadDirectory(self, directory_path):
         self.directory_path = directory_path
-        self.file_list = sorted( os.listdir(directory_path) )
+        files = filter( lambda filename: str(filename[-4:]).lower() in (".jpg", ".png"), os.listdir(directory_path) )
+        self.file_list = sorted(files)
         self.num_files = len(self.file_list)
         
         if self.file_list:
