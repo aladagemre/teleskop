@@ -11,7 +11,7 @@ class ImageViewer(QLabel):
 
     def loadImage(self, image_path):
         self.image_path = image_path
-        pixmap = QPixmap(image_path)
+        self.pixmap = pixmap = QPixmap(image_path)
 
         # Find label width/height
         lwidth, lheight = self.size().width(), self.size().height()
@@ -34,7 +34,14 @@ class ImageViewer(QLabel):
             size = ( newSize.width(), newSize.height() )
         except:
             size = newSize
-        
+
+        # find photo's size
+        width, height = self.pixmap.width(), self.pixmap.height()
+
+        # if this is a portrait, not landscape, then switch the dimensions.
+        if height > width:
+            size = ( size[1], size[0] )
+            
         if not output:
             output = self.image_path
 
