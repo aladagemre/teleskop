@@ -1,8 +1,6 @@
-#from PyQt4.QtCore import QSize
-#from PyQt4.QtGui import QLabel, QPixmap, QGroupBox, QGridLayout
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import sys, os, subprocess
+import sys, os
 from PIL import Image
 
 class ImageViewer(QLabel):
@@ -13,18 +11,34 @@ class ImageViewer(QLabel):
         self.image_path = image_path
         self.pixmap = pixmap = QPixmap(image_path)
 
+        # TODO: Scaling problems exist. Need to work here.
+        
         # Find label width/height
         lwidth, lheight = self.size().width(), self.size().height()
         # Find image width/height
         width, height = pixmap.width(), pixmap.height()
-
+        
+        windowSize = self.window().size()
+        newWidth = windowSize.width()*0.75
+        newHeight = windowSize.height()*0.65
+        
         # According to image width/height,
         # scale up to label width/height
-        if width > height:
-            pixmap = pixmap.scaledToWidth(lwidth)
+        if pixmap:
+            pixmap = pixmap.scaledToHeight(newHeight)
+        """if width > height:
+            pixmap = pixmap.scaledToWidth(newWidth)
         else:
+            pixmap = pixmap.scaledToHeight(newHeight)"""
+
+        """print "Label:", lwidth, lheight
+        print "Image:", width, height
+        
+        if height > lheight:
             pixmap = pixmap.scaledToHeight(lheight)
-        #pixmap = pixmap.scaled()
+        elif width > lwidth:
+            pixmap = pixmap.scaledToWidth(newWidth)"""
+        
         self.setPixmap(pixmap)
 
     def resize(self, newSize, output=None):
@@ -49,8 +63,6 @@ class ImageViewer(QLabel):
         resizedImage = im.resize(size, Image.ANTIALIAS)
         resizedImage.save(output, "JPEG",quality=100)"""
         command = "mogrify -resize %dx%d %s &" % (size[0], size[1], self.image_path)
-        #child = subprocess.Popen(command, shell=True)
-        #child.communicate()
         os.system(command)
 
 
@@ -148,10 +160,11 @@ class ImagePanel(QWidget):
         # ===========( LAYOUT PLACEMENT )=================
         self.layout.addLayout(layout_nav_button)
         self.layout.addWidget(self.image_viewer)
+        self.layout.setAlignment(self.image_viewer, Qt.AlignHCenter)
         self.layout.addWidget(self.image_info)
         self.layout.addLayout(layout_resize_button)
         
-        self.loadDirectory("/home/emre/multimedia/resim")
+        self.loadDirectory(QDir.homePath())
         
     def loadImage(self, image_path):
         if isinstance(image_path, int):

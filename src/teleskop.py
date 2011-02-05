@@ -5,7 +5,7 @@ from PyQt4.QtGui import *
 from imageviewer import ImagePanel
 from filebrowser import FileBrowser
 
-import sys,os
+import sys
 
 class TeleskopWindow(QMainWindow):
     def __init__(self, scene=None):
@@ -24,7 +24,7 @@ class TeleskopWindow(QMainWindow):
 
         self.image_panel = ImagePanel()
         self.file_browser = FileBrowser()
-
+        
         layout.addWidget(self.image_panel)
         layout.addWidget(self.file_browser)
         

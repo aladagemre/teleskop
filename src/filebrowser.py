@@ -30,8 +30,8 @@ class FileBrowser(QWidget):
         layout.addWidget(self.directoryTree)
         self.setLayout(layout)
         
-        dir = QDir('/home/emre/multimedia/resim')
-        root = model.setRootPath(dir.path())
+        
+        root = model.setRootPath(QDir.homePath())
         self.directoryTree.setRootIndex(root)
 
     def currentChanged(self, current, previous):
