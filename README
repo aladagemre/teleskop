@@ -1,0 +1,1 @@
+Queued image resizer. Requirements: Python 2.6+, PyQt4, PIL libraries and ImageMagick (mogrify command)
